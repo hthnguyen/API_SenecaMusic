@@ -47,55 +47,57 @@ passport.use(strategy);
 
 // add passport as application-level middleware
 app.use(passport.initialize());
-
+app.use(express.json());
+app.use(cors());
 /* TODO Add Your Routes Here */
 
 app.post("/api/user/register", (req, res) => {
-    userService.registerUser(req.body).then((msg)=>{
-        res.json({'message':msg})
-    }).catch((msg)=>{
-        res.status(422).json({"message":msg})
+    userService.registerUser(req.body).then((msg) => {
+        res.json({ 'message': msg })
+    }).catch((msg) => {
+        res.status(422).json({ "message": msg })
     })
 });
 
 app.post("/api/user/login", (req, res) => {
     // check login
-    userService.checkUser(req.body).then((user)=>{
+    userService.checkUser(req.body).then((user) => {
         let payload = {
-            _id: user.userName,
+            _id: user._id,
             userName: user.userName
         }
         // provide token
         var token = jwt.sign(payload, jwtOptions.secretOrKey)
-        res.json({"message": "login succesfull", "token" : token})
+        res.json({ "message": "login succesfull", "token": token })
 
-    }).catch((msg)=>{
-        res.status(422).json({"message":msg})
+    }).catch((msg) => {
+        res.status(422).json({ "message": msg })
     })
 });
 
-app.get("/api/user/favourites",passport.authenticate('jwt', { session: false }), (req,res)=>{
-    userService.getFavourites(req.user._id).then((data)=>{
+app.get("/api/user/favourites", passport.authenticate('jwt', { session: false }), (req, res) => {
+    userService.getFavourites(req.user._id).then((data) => {
         res.json(data)
-    }).catch((msg)=>{
-        res.status(500).json({"message":msg})
+    }).catch((msg) => {
+        res.status(500).json({ "message": msg })
     })
 })
 
-app.put("/api/user/favourites/:id",passport.authenticate('jwt', { session: false }), (req,res)=>{
-    userService.addFavourite(req.user._id, req.body).then((data)=>{
+app.put("/api/user/favourites/:id", passport.authenticate('jwt', { session: false }), (req, res) => {  
+    //console.log("ID:", req.params.id)
+    userService.addFavourite(req.user._id, req.params.id).then((data) => {
         res.json(data)
-    }).catch((msg)=>{
-        res.status(500).json({"message":msg})
+    }).catch((msg) => {
+        res.status(500).json({ "message": msg })
     })
 })
 
 
-app.delete("/api/user/favourites/:id",passport.authenticate('jwt', { session: false }), (req,res)=>{
-    userService.removeFavourite(req.user._id, req.body).then((data)=>{
+app.delete("/api/user/favourites/:id", passport.authenticate('jwt', { session: false }), (req, res) => {
+    userService.removeFavourite(req.user._id, req.params.id).then((data) => {
         res.json(data)
-    }).catch((msg)=>{
-        res.status(500).json({"message":msg})
+    }).catch((msg) => {
+        res.status(500).json({ "message": msg })
     })
 })
 

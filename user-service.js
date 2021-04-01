@@ -95,29 +95,35 @@ module.exports.getFavourites = function (id) {
     });
 }
 
-module.exports.addFavourite = function (id, favId) {
 
-    console.log("ID = ", id, "favId = ", favId)
+module.exports.addFavourite = function (id, favId) {
+    console.log(favId,"FavID");
+
     return new Promise(function (resolve, reject) {
 
         User.findById(id).exec().then(user => {
+
             if (user.favourites.length < 50) {
                 User.findByIdAndUpdate(id,
                     { $addToSet: { favourites: favId } },
                     { new: true }
                 ).exec()
-                    .then(user => { resolve(user.favourites); })
-                    .catch(err => { reject(`Unable to update favourites for user with id: ${id}`); })
+                    .then(user => {
+                        resolve(user.favourites);
+                    })
+                    .catch(err => {
+                        reject(`Unable to update favourites for user with id: ${id}`);
+                    })
             } else {
                 reject(`Unable to update favourites for user with id: ${id}`);
             }
-
         })
 
     });
 
 
 }
+
 
 module.exports.removeFavourite = function (id, favId) {
     return new Promise(function (resolve, reject) {
