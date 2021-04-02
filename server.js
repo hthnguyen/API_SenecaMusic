@@ -64,7 +64,8 @@ app.post("/api/user/login", (req, res) => {
     userService.checkUser(req.body).then((user) => {
         let payload = {
             _id: user._id,
-            userName: user.userName
+            userName: user.userName,
+            fullName: user.fullName
         }
         // provide token
         var token = jwt.sign(payload, jwtOptions.secretOrKey)
@@ -84,7 +85,7 @@ app.get("/api/user/favourites", passport.authenticate('jwt', { session: false })
 })
 
 app.put("/api/user/favourites/:id", passport.authenticate('jwt', { session: false }), (req, res) => {  
-    //console.log("ID:", req.params.id)
+    console.log("Da vao favourite ID:", req.params.id)
     userService.addFavourite(req.user._id, req.params.id).then((data) => {
         res.json(data)
     }).catch((msg) => {
