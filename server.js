@@ -17,8 +17,6 @@ app.use(express.json());
 app.use(cors());
 
 
-// Added ?
-
 var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
 
@@ -47,8 +45,7 @@ passport.use(strategy);
 
 // add passport as application-level middleware
 app.use(passport.initialize());
-app.use(express.json());
-app.use(cors());
+
 /* TODO Add Your Routes Here */
 
 app.post("/api/user/register", (req, res) => {
@@ -85,7 +82,7 @@ app.get("/api/user/favourites", passport.authenticate('jwt', { session: false })
 })
 
 app.put("/api/user/favourites/:id", passport.authenticate('jwt', { session: false }), (req, res) => {  
-    console.log("Da vao favourite ID:", req.params.id)
+    //console.log("Backed recieved id:", req.params.id)
     userService.addFavourite(req.user._id, req.params.id).then((data) => {
         res.json(data)
     }).catch((msg) => {
@@ -101,10 +98,6 @@ app.delete("/api/user/favourites/:id", passport.authenticate('jwt', { session: f
         res.status(500).json({ "message": msg })
     })
 })
-
-
-
-
 
 
 userService.connect()
